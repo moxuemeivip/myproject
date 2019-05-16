@@ -1,43 +1,43 @@
 <template>
-    <v-table
-            is-horizontal-resize
-            style="width:100%"
-            :columns="columns"
-            :table-data="tableData"
-            row-hover-color="#eee"
-            row-click-color="#edf7ff"
-            @on-custom-comp="customCompFunc"
-    ></v-table>
+  <div id="myTableTest">
+        <button v-on:click="GetOrderList">Check Orders</button>
+        <v-table
+                is-horizontal-resize
+                style="width:100%"
+                :columns="columns"
+                :table-data="tableData"
+                row-hover-color="#eee"
+                row-click-color="#edf7ff"
+                @on-custom-comp="customCompFunc"
+        ></v-table>
+  </div>
 </template>
 
 <script>
     import Vue from 'vue'
 
+    let resultData = {
+         tableData: [{}
+                    ],
+           columns:
+                    [
+                        { 
+                            field: 'custome', title:'编号', width: 50, titleAlign: 'center', columnAlign: 'center',
+                            formatter: function (rowData,rowIndex,pagingIndex,field) {
+                                return rowIndex < 3 ? '<span style="color:red;font-weight: bold;">' + (rowIndex + 1) + '</span>' : rowIndex + 1
+                            }, isFrozen: true,isResize:true
+                        },                       
+                        {field: 'message', title: '申请说明', width: 200, titleAlign: 'center',columnAlign:'center',isResize:true},
+                        {field: 'orderstatus', title: '状态', width: 260, titleAlign: 'center',columnAlign:'center',isResize:true},
+                        {field: 'creator', title: '申请人',width: 260, titleAlign: 'center',columnAlign:'left',isResize:true},
+                        {field: 'processor', title:'审批人', width: 80, titleAlign: 'center',columnAlign:'center',isResize:true},
+                        {field: 'custome-adv', title: '操作',width: 200, titleAlign: 'center',columnAlign:'center',componentName:'table-operation',isResize:true}
+                    ]            
+    }
+
     export default{
         data() {
-            return {
-                 tableData: [
-                     {"name":"赵伟","tel":"156*****1987","hobby":"钢琴、书法、唱歌","address":"上海市黄浦区金陵东路569号17楼"},
-                     {"name":"李伟","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-                     {"name":"孙伟","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-                     {"name":"周伟","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-                     {"name":"吴伟","tel":"183*****6678","hobby":"钢琴、书法、唱歌","address":"上海市松江区乐都西路867-871号"}
-                 ],
-                columns: [
-                     {
-                        field: 'custome', title:'序号', width: 50, titleAlign: 'center', columnAlign: 'center',
-                        formatter: function (rowData,rowIndex,pagingIndex,field) {
-                            return rowIndex < 3 ? '<span style="color:red;font-weight: bold;">' + (rowIndex + 1) + '</span>' : rowIndex + 1
-                        }, isFrozen: true,isResize:true
-                    },
-                    {field: 'name', title:'姓名', width: 80, titleAlign: 'center',columnAlign:'center',isResize:true},
-                    {field: 'tel', title: '手机号码', width: 200, titleAlign: 'center',columnAlign:'center',isResize:true},
-                    {field: 'hobby', title: '爱好', width: 260, titleAlign: 'center',columnAlign:'center',isResize:true},
-                    {field: 'address', title: '地址',width: 260, titleAlign: 'center',columnAlign:'left',isResize:true},
-                    {field: 'custome-adv', title: '操作',width: 200, titleAlign: 'center',columnAlign:'center',componentName:'table-operation',isResize:true}
-                ]
-                
-            }
+            return resultData
         },
         methods:{
             customCompFunc(params){
@@ -53,6 +53,16 @@
                     alert(`行号：${params.index} 姓名：${params.rowData['name']}`)
                 }
 
+            },
+
+            GetOrderList:function(){
+             this.$ajxj.get('/applyorder/getAll')
+              .then((response) => {
+              //this.approvemessage = response.data
+              this.tableData = response.data
+              }).catch((err) => {
+                console.log(err)
+              })
             }
         }
     }
@@ -60,7 +70,7 @@
   // 自定义列组件
     Vue.component('table-operation',{
         template:`<span>
-        <a href="" @click.stop.prevent="update(rowData,index)">编辑</a>&nbsp;
+        <a href="" @click.stop.prevent="update(rowData,index)">批准</a>&nbsp;
         <a href="" @click.stop.prevent="deleteRow(rowData,index)">删除</a>
         </span>`,
         props:{

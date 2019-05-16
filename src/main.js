@@ -3,12 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import axios from './axios'
 
 import "vue-easytable/libs/themes-base/index.css";
 // 导入 table 和 分页组件
 import { VTable, VPagination } from "vue-easytable";
 
 Vue.config.productionTip = false
+Vue.prototype.$ajxj = axios
 
 Vue.use(VTable);
 Vue.use(VPagination);

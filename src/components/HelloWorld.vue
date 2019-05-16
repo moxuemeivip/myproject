@@ -80,16 +80,32 @@
         </a>
       </li>
     </ul>
+    <p>{{ approvemessage }}</p>
+    <button v-on:click="Approve">Approve</button>
   </div>
 </template>
 
 <script>
+let data = {
+    msg: 'Welcome to Your Vue.js App! Lulu first login',
+    approvemessage:"Click to approve"
+  }
+
 export default {
   name: 'HelloWorld',
   data () {
-    return {
-      msg: 'Welcome to Your Vue.js App! Lulu first login'
-    }
+    return data
+  },
+  methods:{
+    Approve:function(){
+      this.$ajxj.get('/applyorder/approveAll')
+              .then((response) => {
+              this.approvemessage = response.data
+              }).catch((err) => {
+                this.approvemessage = '处理异常'
+                console.log(err)
+              })
+        }
   }
 }
 </script>
